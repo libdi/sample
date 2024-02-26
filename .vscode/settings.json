@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.h": "c",
+  },
+  "clangd.detectExtensionConflicts": false,
+  "C_Cpp.autocomplete": "disabled",
+  "C_Cpp.intelliSenseEngine": "disabled",
+}
