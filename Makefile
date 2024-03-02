@@ -1,33 +1,37 @@
-CC = clang
-OBJCOPY = llvm-objcopy
+CC := clang
+OBJCOPY := llvm-objcopy
+CPPFLAGS := -DNDEBUG
+CFLAGS := -std=c99 -Wall -Wextra -Werror -pedantic -x c
+LDFLAGS :=
 
-all: ./hello.package
+-include include.local.mk
+
+all: ./out/hello.package
 
 clean:
-	rm -f ./package ./module ./component ./*.section ./*.o
+	rm -rf ./obj ./exe ./out
 
-hello.package: ./package ./hello.module
-	$@
+./out/%.package: ./exe/package ./out/%.module | ./out
+	$^
 
-./hello.module: ./module ./hello.component
-	$@
+./out/%.module: ./exe/module ./out/%.component | ./out
+	$^
 
-./%.component: ./component src/%.txt ./%.export.section ./%.init.section ./%.fini.section
-	$@
+./out/%.component: ./exe/component src/%.txt ./obj/%.export.section ./obj/%.init.section ./obj/%.fini.section ./src/%.deps | ./out
+	$^
 
-./%.export.section: ./%.o
+./obj/%.export.section: ./obj/%.o | ./obj
 	$(OBJCOPY) --dump-section .text,export=$@ $<
-./%.init.section: ./%.o
+./obj/%.init.section: ./obj/%.o | ./obj
 	$(OBJCOPY) --dump-section .text,init=$@ $<
-./%.fini.section: ./%.o
+./obj/%.fini.section: ./obj/%.o | ./obj
 	$(OBJCOPY) --dump-section .text,fini=$@ $<
 
-./%.o: ./src/%.c
-	$(CC) -c -o $@ $<
+./obj/%.o: ./src/%.c | ./obj
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
-./package: src/package.c
-	$(CC) -o $@ $<
-./module: src/module.c
-	$(CC) -o $@ $<
-./component: src/component.c
-	$(CC) -o $@ $<
+./exe/%: ./obj/%_cli.o ./obj/%.o ./obj/util.o | ./exe
+	$(CC) $(LDFLAGS) -o $@ $<
+
+./exe ./obj ./out:
+	mkdir $@

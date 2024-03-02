@@ -1,7 +1,8 @@
 #pragma once
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct di {
-	void *context;
-	void *function;
+  void *context;
+  void *function;
 } di_t;
+#pragma pack(pop)

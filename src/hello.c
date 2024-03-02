@@ -4,12 +4,13 @@
 
 #include "di.h"
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct context {
 	void (*free)(void *ptr);
 	int (*puts)(const char *str);
 	char *message;
 } context_t;
+#pragma pack(pop)
 
 __attribute__((section(".text,export")))
 bool export(context_t *context) {
