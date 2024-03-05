@@ -15,12 +15,12 @@ typedef struct buffer_builder {
   void *buffer;
   size_t length;
   size_t capacity;
-} buffer_builder_t;
+} builder_t;
 
-err_t buffer_read(const char *file_name, buffer_t *out);
-err_t buffer_merge(size_t count, buffer_t *buffers, buffer_t *out);
+err_t di_internal_buffer_read(const char *file_name, buffer_t *out);
+err_t di_internal_buffer_merge(size_t count, buffer_t *buffers, buffer_t *out);
 
-buffer_builder_t *new_buffer_builder(void);
-err_t buffer_builder_append(buffer_builder_t *self, buffer_t buffer);
-void buffer_builder_build(buffer_builder_t *self, buffer_t *out);
-void delete_buffer_builder(buffer_builder_t *self);
+builder_t *di_internal_new_builder(void);
+err_t di_internal_builder_append(builder_t *self, buffer_t buffer);
+void di_internal_builder_build(builder_t *self, buffer_t *out);
+void di_internal_delete_builder(builder_t *self);

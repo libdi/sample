@@ -1,6 +1,6 @@
 #include "validate_dependency.h"
 
-err_t validate_dependency(buffer_t buffer, uint_fast16_t *out_count) {
+err_t di_validate_dependency(buffer_t buffer, uint_fast16_t *out_count) {
   uint_fast16_t result = 0;
   byte_t *buf = buffer.buffer;
   size_t current_position = 0;

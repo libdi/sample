@@ -10,10 +10,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
   buffer_t content;
-  if (buffer_read(argv[1], &content))
+  if (di_internal_buffer_read(argv[1], &content))
     exit(EXIT_FAILURE);
   uint_fast16_t unused;
-  if (validate_dependency(content, &unused))
+  if (di_validate_dependency(content, &unused))
     exit(EXIT_FAILURE);
   free(content.buffer);
 }

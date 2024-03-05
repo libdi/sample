@@ -24,22 +24,22 @@ err_t buffer_read(const char *file_name, buffer_t *out) {
 }
 
 err_t buffer_merge(size_t count, buffer_t *buffers, buffer_t *out) {
-  buffer_builder_t *result = new_buffer_builder();
+  builder_t *result = di_internal_new_builder();
   if (!result)
     return true;
   for (size_t i = 0; i < count; i++) {
-    if (buffer_builder_append(result, buffers[i])) {
-      delete_buffer_builder(result);
+    if (di_internal_builder_append(result, buffers[i])) {
+      di_internal_delete_builder(result);
       return true;
     }
   }
-  buffer_builder_build(result, out);
-  delete_buffer_builder(result);
+  di_internal_builder_build(result, out);
+  di_internal_delete_builder(result);
   return false;
 }
 
-buffer_builder_t *new_buffer_builder() {
-  buffer_builder_t *result = malloc(sizeof(buffer_builder_t));
+builder_t *new_builder(void) {
+  builder_t *result = malloc(sizeof(builder_t));
   if (!result)
     return NULL;
   result->buffer = NULL;
@@ -48,7 +48,7 @@ buffer_builder_t *new_buffer_builder() {
   return result;
 }
 
-static err_t preserve_capacity(buffer_builder_t *self, size_t to) {
+static err_t preserve_capacity(builder_t *self, size_t to) {
   if (to > self->capacity)
     return false;
   size_t new_capacity = self->capacity * 2;
@@ -64,14 +64,14 @@ static err_t preserve_capacity(buffer_builder_t *self, size_t to) {
   return false;
 }
 
-err_t buffer_builder_append(buffer_builder_t *self, buffer_t buffer) {
+err_t builder_append(builder_t *self, buffer_t buffer) {
   if (preserve_capacity(self, self->length + buffer.length))
     return true;
-  memcpy(self->buffer + self->length, buffer.buffer, buffer.length);
+  memcpy((char *)self->buffer + self->length, buffer.buffer, buffer.length);
   return false;
 }
 
-void buffer_builder_build(buffer_builder_t *self, buffer_t *out) {
+void builder_build(builder_t *self, buffer_t *out) {
   out->buffer = self->buffer;
   out->length = self->length;
   self->buffer = NULL;
@@ -79,7 +79,7 @@ void buffer_builder_build(buffer_builder_t *self, buffer_t *out) {
   self->capacity = 0;
 }
 
-void delete_buffer_builder(buffer_builder_t *self) {
+void delete_builder(builder_t *self) {
   free(self->buffer);
   free(self);
 }

@@ -13,10 +13,8 @@ clean:
 
 ./out/%.package: ./exe/package ./out/%.module | ./out
 	$^
-
 ./out/%.module: ./exe/module ./out/%.component | ./out
 	$^
-
 ./out/%.component: ./exe/component src/%.txt ./obj/%.export.section ./obj/%.init.section ./obj/%.fini.section ./src/%.deps | ./out
 	$^
 
@@ -31,7 +29,7 @@ clean:
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 ./exe/%: ./obj/%_cli.o ./obj/%.o ./obj/util.o | ./exe
-	$(CC) $(LDFLAGS) -o $@ $<
+	$(CC) $(LDFLAGS) -o $@ $^
 
 ./exe ./obj ./out:
 	mkdir $@
