@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-err_t buffer_read(const char *file_name, buffer_t *out) {
+err_t di_internal_buffer_read(const char *file_name, buffer_t *out) {
   FILE *fp = fopen(file_name, "rb");
   if (fp == NULL)
     return true;
@@ -23,7 +23,7 @@ err_t buffer_read(const char *file_name, buffer_t *out) {
   return false;
 }
 
-err_t buffer_merge(size_t count, buffer_t *buffers, buffer_t *out) {
+err_t di_internal_buffer_merge(size_t count, buffer_t *buffers, buffer_t *out) {
   builder_t *result = di_internal_new_builder();
   if (!result)
     return true;
@@ -38,7 +38,7 @@ err_t buffer_merge(size_t count, buffer_t *buffers, buffer_t *out) {
   return false;
 }
 
-builder_t *new_builder(void) {
+builder_t *di_internal_new_builder(void) {
   builder_t *result = malloc(sizeof(builder_t));
   if (!result)
     return NULL;
@@ -64,14 +64,14 @@ static err_t preserve_capacity(builder_t *self, size_t to) {
   return false;
 }
 
-err_t builder_append(builder_t *self, buffer_t buffer) {
+err_t di_internal_builder_append(builder_t *self, buffer_t buffer) {
   if (preserve_capacity(self, self->length + buffer.length))
     return true;
   memcpy((char *)self->buffer + self->length, buffer.buffer, buffer.length);
   return false;
 }
 
-void builder_build(builder_t *self, buffer_t *out) {
+void di_internal_builder_build(builder_t *self, buffer_t *out) {
   out->buffer = self->buffer;
   out->length = self->length;
   self->buffer = NULL;
@@ -79,7 +79,7 @@ void builder_build(builder_t *self, buffer_t *out) {
   self->capacity = 0;
 }
 
-void delete_builder(builder_t *self) {
+void di_internal_delete_builder(builder_t *self) {
   free(self->buffer);
   free(self);
 }
